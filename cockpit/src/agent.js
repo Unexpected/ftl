@@ -19,6 +19,10 @@ const requests = {
     superagent.post(`${API_ROOT}${url}`, body).then(responseBody)
 };
 
+const App = {
+  modules: () => requests.get('/modules')
+};
+
 const Entities = {
   getAll: () => requests.get('/entities')
 };
@@ -74,6 +78,7 @@ const Profile = {
 }; */
 
 export default {
+  App,
   Entities,
   Attributes,
   Person

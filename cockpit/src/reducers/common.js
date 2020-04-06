@@ -1,3 +1,7 @@
+
+import {
+  APP_INITIALIZE
+} from '../constants/actionTypes';
 /*import {
   APP_LOAD,
   REDIRECT,
@@ -18,6 +22,8 @@
 } from '../constants/actionTypes';
 */
 const defaultState = {
+  appInitialized: false,
+
   appLoaded: false,
   viewLoaded: false,
   viewChangeCounter: 0
@@ -25,6 +31,13 @@ const defaultState = {
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case APP_INITIALIZE:
+      return {
+        ...state,
+        modules: action.payload[0],
+        appInitialized: true
+      }
+
     case 'LOCATION_CHANGE':
       return {
         ...state,
