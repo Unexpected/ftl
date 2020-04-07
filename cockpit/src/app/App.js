@@ -25,6 +25,16 @@ const mapStateToProps = state => {
 };
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+    this.handleModuleSelect = this.handleModuleSelect.bind(this);
+  }
+
+  handleModuleSelect(event) {
+    this.setState({ currentModule: event.target.value });
+  }
+
   componentDidMount() {
     // Initialize application by getting all available modules
     Promise.all([
@@ -36,15 +46,15 @@ class App extends React.Component {
     if (!this.props.appInitialized) {
       return (<div>Loading... Please Wait...</div>);
     }
-    if (!this.props.currentModule) {
+    if (!this.state.currentModule) {
       return (<div className="App">
-        <ModuleSelector modules={this.props.modules} />
+        <ModuleSelector modules={this.props.modules} onModuleSelect={this.handleModuleSelect} />
       </div>);
     }
     return (
       <div className="App">
         <Container>
-          <Header entities={this.props.entities} />
+          <Header module={this.state.currentModule} onModuleSelect={this.handleModuleSelect} entities={this.props.modules} />
           <Content />
           <Footer />
         </Container>

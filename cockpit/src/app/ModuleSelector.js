@@ -1,8 +1,7 @@
 import React from 'react';
 import Card from 'react-bootstrap/Card';
 import CardDeck from 'react-bootstrap/CardDeck';
-
-import { Link } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
 
 class ModuleSelector extends React.Component {
 
@@ -28,7 +27,7 @@ class ModuleSelector extends React.Component {
                         <Card.Text>
                             {module.comment}
                         </Card.Text>
-                        <Card.Link as={Link} to={"/" + module.name}>Load</Card.Link>
+                        <Button onClick={this.props.onModuleSelect} value={module.name}>Go</Button>
                     </Card.Body>
                 </Card>
             );
