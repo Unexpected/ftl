@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, make_response
 from flask.json import jsonify
 from db.database import reset, close_db, create_model
 from db.database import get_entities, get_attributes
@@ -58,7 +58,9 @@ def module(module_name):
     del module_dict["_sa_instance_state"]
     print(json.dumps(module_dict))
     # sqlalchemy_to_json([module])
-    return json.dumps(module_dict, indent=2)
+    r = make_response(json.dumps(module_dict, indent=2))
+    r.mimetype = 'application/json'
+    return r
 
 
 @app.route('/api/core/entities')
