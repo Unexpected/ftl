@@ -8,17 +8,20 @@ import Container from 'react-bootstrap/Container';
 import ModuleSelector from './ModuleSelector.js';
 import { connect } from 'react-redux';
 import agent from '../agent.js';
-import { APP_INITIALIZE } from '../constants/actionTypes.js';
+import { APP_INITIALIZE, APP_SELECT_MODULE } from '../constants/actionTypes.js';
 
 const mapDispatchToProps = dispatch => ({
   initialize: payload =>
-    dispatch({ type: APP_INITIALIZE, payload })
+    dispatch({ type: APP_INITIALIZE, payload }),
+  selectModule: moduleName =>
+    dispatch({ type: APP_SELECT_MODULE, moduleName: moduleName })
 });
 
 const mapStateToProps = state => {
   return {
     appInitialized: state.common.appInitialized,
     modules: state.common.modules,
+    currentModule: state.common.currentModule,
     appLoaded: state.common.appLoaded,
     entities: state.common.entities
   }
@@ -32,7 +35,7 @@ class App extends React.Component {
   }
 
   handleModuleSelect(event) {
-    this.setState({ currentModule: event.target.value });
+    this.props.selectModule(event.target.value);
   }
 
   componentDidMount() {
@@ -46,7 +49,7 @@ class App extends React.Component {
     if (!this.props.appInitialized) {
       return (<div>Loading... Please Wait...</div>);
     }
-    if (!this.state.currentModule) {
+    if (!this.props.currentModule) {
       return (<div className="App">
         <ModuleSelector modules={this.props.modules} onModuleSelect={this.handleModuleSelect} />
       </div>);
@@ -54,7 +57,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <Container>
-          <Header module={this.state.currentModule} onModuleSelect={this.handleModuleSelect} entities={this.props.modules} />
+          <Header onModuleSelect={this.handleModuleSelect} />
           <Content />
           <Footer />
         </Container>

@@ -39,3 +39,4 @@ export const APP_LOAD = 'APP_LOAD';
 export const ACTION_SAVE = 'ACTION_SAVE';
 
 export const APP_INITIALIZE = 'APP_INITIALIZE';
+export const APP_SELECT_MODULE = 'APP_SELECT_MODULE';
