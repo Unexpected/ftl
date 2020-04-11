@@ -23,6 +23,10 @@ const App = {
   modules: () => requests.get('/modules')
 };
 
+const Module = {
+  metadata: moduleName => { const out = requests.get(`/module/${moduleName}`); console.log(out); return out; }
+};
+
 const Entities = {
   getAll: () => requests.get('/entities')
 };
@@ -79,6 +83,7 @@ const Profile = {
 
 export default {
   App,
+  Module,
   Entities,
   Attributes,
   Person

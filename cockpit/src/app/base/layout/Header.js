@@ -1,8 +1,16 @@
 import React from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
+import { connect } from 'react-redux';
 
 import { Link } from 'react-router-dom';
+
+const mapStateToProps = state => {
+    return {
+        moduleName: state.common.module.name,
+        entities: state.common.module.entities
+    }
+};
 
 class Menu extends React.Component {
 
@@ -15,6 +23,7 @@ class Menu extends React.Component {
     }
 
     render() {
+
         const navItems = [];
         this.props.entities.forEach((entity) => {
             // const entity = e[0];
@@ -53,4 +62,4 @@ class Header extends React.Component {
     }
 }
 
-export default Header;
+export default connect(mapStateToProps)(Header);

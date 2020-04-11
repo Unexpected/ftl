@@ -1,7 +1,7 @@
 
 import {
   APP_INITIALIZE,
-  APP_SELECT_MODULE
+  MODULE_INITIALIZE
 } from '../constants/actionTypes';
 /*import {
   APP_LOAD,
@@ -38,10 +38,11 @@ export default (state = defaultState, action) => {
         modules: action.payload[0],
         appInitialized: true
       };
-    case APP_SELECT_MODULE:
+    case MODULE_INITIALIZE:
       return {
         ...state,
-        currentModule: action.moduleName
+        currentModule: action.moduleName,
+        module: action.metadata[0]
       };
 
     case 'LOCATION_CHANGE':

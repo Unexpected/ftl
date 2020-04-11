@@ -8,13 +8,13 @@ import Container from 'react-bootstrap/Container';
 import ModuleSelector from './ModuleSelector.js';
 import { connect } from 'react-redux';
 import agent from '../agent.js';
-import { APP_INITIALIZE, APP_SELECT_MODULE } from '../constants/actionTypes.js';
+import { APP_INITIALIZE, MODULE_INITIALIZE } from '../constants/actionTypes.js';
 
 const mapDispatchToProps = dispatch => ({
   initialize: payload =>
     dispatch({ type: APP_INITIALIZE, payload }),
-  selectModule: moduleName =>
-    dispatch({ type: APP_SELECT_MODULE, moduleName: moduleName })
+  selectModule: (moduleName, metadata) =>
+    dispatch({ type: MODULE_INITIALIZE, moduleName: moduleName, metadata: metadata })
 });
 
 const mapStateToProps = state => {
@@ -22,8 +22,6 @@ const mapStateToProps = state => {
     appInitialized: state.common.appInitialized,
     modules: state.common.modules,
     currentModule: state.common.currentModule,
-    appLoaded: state.common.appLoaded,
-    entities: state.common.entities
   }
 };
 
@@ -35,7 +33,10 @@ class App extends React.Component {
   }
 
   handleModuleSelect(event) {
-    this.props.selectModule(event.target.value);
+    const moduleName = event.target.value;
+    Promise.all([
+      agent.Module.metadata(moduleName)
+    ]).then((data) => { console.log(data); this.props.selectModule(moduleName, data) });
   }
 
   componentDidMount() {
