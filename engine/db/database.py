@@ -8,7 +8,9 @@ from sqlalchemy.orm.query import Query
 
 from db.model import *
 
-engine = create_engine('postgres+psycopg2://ftl:ftl@localhost:5432/ftl').execution_options(
+CONNECTION_STRING = 'postgres+psycopg2://ftl:ftl@localhost:5432/ftl'
+
+engine = create_engine(CONNECTION_STRING).execution_options(
     schema_translate_map={None: "app", "core": "core", "demo": "demo"})
 
 # Bind the engine to the metadata of the Base class so that the
