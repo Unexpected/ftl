@@ -1,7 +1,8 @@
 
 import {
   APP_INITIALIZE,
-  MODULE_INITIALIZE
+  MODULE_INITIALIZE,
+  MODULE_UNLOAD
 } from '../constants/actionTypes';
 /*import {
   APP_LOAD,
@@ -43,6 +44,12 @@ export default (state = defaultState, action) => {
         ...state,
         currentModule: action.moduleName,
         module: action.metadata[0]
+      };
+    case MODULE_UNLOAD:
+      return {
+        ...state,
+        currentModule: null,
+        module: null
       };
 
     case 'LOCATION_CHANGE':

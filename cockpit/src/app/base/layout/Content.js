@@ -9,10 +9,8 @@ function Content(props) {
     return (
         <Switch>
             <Route exact path="/" component={Home} />
-            <Route path="/entities" component={List} />
-            <Route path="/queries" component={List} />
-            <Route path="/entity/:entityName/:id" component={Action} />
             <Route path="/entity/:entityName" component={List} />
+            <Route path="/entity/:entityName/:id" component={Action} />
         </Switch>
     );
 }

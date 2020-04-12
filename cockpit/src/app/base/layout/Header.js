@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 const mapStateToProps = state => {
     return {
-        moduleName: state.common.module.name,
+        module: state.common.module,
         entities: state.common.module.entities
     }
 };
@@ -32,13 +32,10 @@ class Menu extends React.Component {
 
         return (
             <Navbar bg="dark" variant="dark" sticky="top" expand="lg">
-                <Navbar.Brand href="#home">Faster Than Light</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/">{this.props.module.label}</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
-                        <Nav.Link as={Link} to="/">Home</Nav.Link>
-                        <Nav.Link as={Link} to="/entities">Entities</Nav.Link>
-                        <Nav.Link as={Link} to="/queries">Queries</Nav.Link>
                         {navItems}
                     </Nav>
                     {/* TODO : Quicksearch ? 
@@ -56,7 +53,7 @@ class Header extends React.Component {
     render() {
         return (
             <div id="header">
-                <Menu entities={this.props.entities} />
+                <Menu module={this.props.module} entities={this.props.entities} />
             </div>
         );
     }

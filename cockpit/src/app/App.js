@@ -36,7 +36,7 @@ class App extends React.Component {
     const moduleName = event.target.value;
     Promise.all([
       agent.Module.metadata(moduleName)
-    ]).then((data) => { console.log(data); this.props.selectModule(moduleName, data) });
+    ]).then((data) => { this.props.selectModule(moduleName, data) });
   }
 
   componentDidMount() {
