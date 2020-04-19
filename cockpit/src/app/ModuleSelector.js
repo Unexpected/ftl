@@ -20,7 +20,7 @@ class ModuleSelector extends React.Component {
         this.props.modules.forEach((module) => {
             // const entity = e[0];
             moduleItems.push(
-                <Card key={'card-' + module.name} bg='dark' text="white" style={{ width: '18rem', flex: 'inherit' }}>
+                <Card key={'card-' + module.name} bg='dark' text="white" className="mx-auto" style={{ width: '18rem', flex: 'inherit' }}>
                     <Card.Img variant="top" src="logo192.png" />
                     <Card.Body>
                         <Card.Title>{module.label}</Card.Title>

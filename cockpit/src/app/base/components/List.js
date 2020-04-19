@@ -7,7 +7,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 const mapStateToProps = state => {
     return {
         listLoaded: state.common.viewLoaded,
-        entities: state.common.entities,
+        entities: state.common.module.entities,
         listData: state.common.viewData,
     }
 };
@@ -22,20 +22,31 @@ class List extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loadedEntity: null
+            loadedEntity: null,
+            columns: []
         };
     }
 
-    fetchData() {
-        const currentEntity = this.props.match.params.entityName;
-        if (this.state.loadedEntity !== currentEntity) {
-            agent.Attributes.all(currentEntity).then(this.setState({ loadedEntity: currentEntity })).then(payload => this.props.onLoad(payload));
+    updateComponent() {
+        const currentEntityName = this.props.match.params.entityName;
+        if (this.state.loadedEntity === null || this.state.loadedEntity["name"] !== currentEntityName) {
+            // display a new list
+
+            // update columns in state and start fetching data
+            const loadedEntity = this.props.entities[currentEntityName];
+            const columns = []
+            Object.entries(loadedEntity.attributes).forEach(([name, attribute]) => {
+                columns.push({
+                    dataField: name,
+                    text: attribute.label
+                });
+            });
+            agent.Entities.all(loadedEntity.name).then(this.setState({ "loadedEntity": loadedEntity, "columns": columns })).then(payload => this.props.onLoad(payload));
         }
     }
 
     componentDidMount() {
-        console.log("this should start a dispatch");
-        this.fetchData();
+        this.updateComponent();
         //this.props.onLoad("entities");
 
         /*
@@ -47,9 +58,7 @@ class List extends React.Component {
     }
 
     componentDidUpdate() {
-        this.fetchData();
-
-        console.log("update, entity name is now : " + this.props.match.params.entityName);
+        this.updateComponent();
     }
 
     componentWillUnmount() {
@@ -57,43 +66,22 @@ class List extends React.Component {
     }
 
     render() {
-        if (this.props.listLoaded) {
-            const columns = [{
-                dataField: 'entity_name',
-                text: 'entity_name'
-            }, {
-                dataField: 'name',
-                text: 'name'
-            }, {
-                dataField: 'label',
-                text: 'label'
-            }, {
-                dataField: 'length',
-                text: 'length'
-            }, {
-                dataField: 'mandatory',
-                text: 'mandatory'
-            }];
-
-            const rowEvents = {
-                onClick: (e, row, rowIndex) => {
-                    this.props.history.push(`/entity/${row.entity_name}/${row.name}`)
-                }
-            };
-            /*const rows = [];
-            this.props.listData.forEach((row) => {
-                rows.push(<div><div>{row.label}</div><div>{row.entity_name}</div><div>{row.name}</div></div>);
-            });*/
-            return (
-                <div>
-                    Ceci est la liste des objets de type : {this.props.match.params.entityName}
-                    <BootstrapTable keyField='name' data={this.props.listData} columns={columns} rowEvents={rowEvents} />
-                </div>
-            );
+        if (this.state.columns.length === 0) {
+            return (<div>Loading list, please wait...</div>);
         }
+        const rowEvents = {
+            onClick: (e, row, rowIndex) => {
+                this.props.history.push(`/entity/${row.entity_name}/${row.name}`)
+            }
+        };
+        /*const rows = [];
+        this.props.listData.forEach((row) => {
+            rows.push(<div><div>{row.label}</div><div>{row.entity_name}</div><div>{row.name}</div></div>);
+        });*/
         return (
             <div>
-                Loading... Please wait...
+                Ceci est la liste des objets de type : {this.props.match.params.entityName}
+                <BootstrapTable keyField='name' data={this.props.listData} columns={this.state.columns} rowEvents={rowEvents} />
             </div>
         );
     }

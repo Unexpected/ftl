@@ -35,7 +35,7 @@ class Home extends React.Component {
                     <Row className="justify-content-md-center">This is home</Row>
                     <Row>Loaded module: {this.props.module.name} - {this.props.module.label}</Row>
                     <Row>Loaded module: {this.props.module.comment}</Row>
-                    <Row>Module has {this.props.module.entities.length} entities</Row>
+                    <Row>Module has {Object.entries(this.props.module.entities).length} entities</Row>
                     <Row><Button onClick={this.handleModuleUnload}>Select another module</Button></Row>
                 </Container>
             </div>

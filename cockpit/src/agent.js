@@ -3,7 +3,8 @@ import _superagent from 'superagent';
 
 const superagent = superagentPromise(_superagent, global.Promise);
 
-const API_ROOT = 'http://localhost:5000/api/core';
+const API_ROOT = 'http://localhost:5000/';
+
 
 // const encode = encodeURIComponent;
 const responseBody = res => res.body;
@@ -20,15 +21,15 @@ const requests = {
 };
 
 const App = {
-  modules: () => requests.get('/modules')
+  modules: () => coreRequests.get('/core/module')
 };
 
 const Module = {
-  metadata: moduleName => { const out = requests.get(`/module/${moduleName}`); console.log(out); return out; }
+  metadata: moduleName => { const out = requests.get(`/core/module/${moduleName}`); console.log(out); return out; }
 };
 
 const Entities = {
-  getAll: () => requests.get('/entities')
+  all: () => requests.get('/entities')
 };
 
 // const limit = (count, p) => `limit=${count}&offset=${p ? p * count : 0}`;

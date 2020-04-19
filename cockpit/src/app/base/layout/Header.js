@@ -25,9 +25,9 @@ class Menu extends React.Component {
     render() {
 
         const navItems = [];
-        this.props.entities.forEach((entity) => {
+        Object.entries(this.props.entities).forEach(([name, entity]) => {
             // const entity = e[0];
-            navItems.push(<Nav.Link as={Link} key={entity.name} to={"/entity/" + entity.name}>{entity.label}</Nav.Link>)
+            navItems.push(<Nav.Link as={Link} key={name} to={"/entity/" + name}>{entity.label}</Nav.Link>)
         });
 
         return (
