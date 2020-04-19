@@ -1,7 +1,8 @@
 from flask import Flask, g
 from flask_cors import CORS
+from flask.json import jsonify
 
-from core.db import check_db_connection, close_db_connection
+from core.db import check_db_connection, close_db_connection, get_all, reset
 
 app = Flask(__name__)
 CORS(app)
@@ -9,13 +10,31 @@ CORS(app)
 
 @app.route("/")
 def index_one():
-    return "Hi im core"
+    return "core API endpoint OK"
 
 
-@app.route('/test')
+def sqlalchemy_to_json(objects):
+    dicts = [dict(o.__dict__) for o in objects]
+    for d in dicts:
+        del d["_sa_instance_state"]
+    return jsonify([d for d in dicts])
+
+
+@app.route('/<entity_name>')
+def all(entity_name):
+    """ List of all <entity_name> """
+    all = get_all(entity_name)
+    return sqlalchemy_to_json(all)
+
+
+@app.route('/db/reset-db')
 # @with_appcontext
-def test():
-    return "Test OK for core !"
+def init_db_command():
+    """Reset database."""
+    print("will reset database")
+    reset()
+    print("database reset done !")
+    return "Database reset OK"
 
 
 def teardown(e):

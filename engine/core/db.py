@@ -1,8 +1,12 @@
+import sys
+
 from flask import current_app, g
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.query import Query
+
+from core.business import get_core_metadata
 
 from core.model import *
 
@@ -37,7 +41,6 @@ def get_db_session():
 
 def check_db_connection():
     session = get_db_session()
-    create_all()
     session.close()
 
 
@@ -45,6 +48,30 @@ def close_db_connection(e=None):
     db_session = g.pop('db_session', None)
     if db_session is not None:
         db_session.close()
+
+
+def get_all(entity_name):
+    db_session = get_db_session()
+
+    className = entity_name[0].upper() + entity_name[1:]
+    clazz = getattr(sys.modules["core.model"], className)
+    q = db_session.query(clazz)
+    return q.all()
+
+
+def get_data(entity_name):
+    db_session = get_db_session()
+
+    print(Base)
+    print(Base._decl_class_registry)
+    print(len(Base._decl_class_registry))
+    for k, v in Base._decl_class_registry.items():
+        print(k)
+        print(v)
+    # entity = Base._decl_class_registry.get(entity_name, None)
+    # q = db_session.query(entity)
+    # return q.all()
+    return []
 
 
 def drop_all():
@@ -103,7 +130,6 @@ def create_model():
     Base.metadata.create_all(engine)
 
 
-"""
 def insert_core_metadata():
     core_entities, core_attributes, core_keys, core_key_attributes, core_module = get_core_metadata()
 
@@ -122,39 +148,17 @@ def insert_core_metadata():
 
     db_session.add(core_module)
     db_session.commit()
-"""
 
 
 def reset():
     drop_all()
     create_all()
-    # insert_core_metadata()
+    insert_core_metadata()
     insert_startup_data()
     create_model()
     # db_session = get_db_session()
     # with current_app.open_resource('schema.sql') as f:
     #    db.executescript(f.read().decode('utf8'))
-
-
-def get_entities():
-    db_session = get_db_session()
-    q = db_session.query(Entity)
-    return q.all()
-
-
-def get_data(entity_name):
-    db_session = get_db_session()
-
-    print(Base)
-    print(Base._decl_class_registry)
-    print(len(Base._decl_class_registry))
-    for k, v in Base._decl_class_registry.items():
-        print(k)
-        print(v)
-    # entity = Base._decl_class_registry.get(entity_name, None)
-    # q = db_session.query(entity)
-    # return q.all()
-    return []
 
 
 def get_attributes(entity_name):
