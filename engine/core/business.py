@@ -1,111 +1,55 @@
-import os
-import sys
-from sqlalchemy import Table, Column, ForeignKey, Integer, String, ForeignKeyConstraint, Boolean, Date
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+from core.model import *
 
-Base = declarative_base()
+"""
+def load_model():
+    db_session = get_db_session()
+    for module in db_session.query(Module).all():
+        if module.name == "core":
+            continue
 
+        for entity in module.entities:
+            table_name = entity.table_name
+            if not table_name:
+                table_name = entity.name
+            attr_dict = {'__tablename__': table_name}
+            if entity.schema_name != None:
+                attr_dict['__table_args__'] = {'schema': entity.schema_name}
 
-class Entity(Base):
-    __tablename__ = 'entity'
-    name = Column(String(80), primary_key=True)
-    # meta info
-    database_name = Column(String(80))
-    schema_name = Column(String(80))
-    table_name = Column(String(80))
-    # business info
-    label = Column(String(250))
-    comment = Column(String(4000))
-    # engine technical data
-    status = Column(Integer)
-    __table_args__ = {'schema': 'core'}
+            pk_attributes = set()
+            for key in entity.keys:
+                if key.key_type == 0:
+                    for key_attribute in key.key_attributes:
+                        pk_attributes.add(key_attribute.attribute_name)
 
+            for attribute in entity.attributes:
+                data_type_class = None
+                if attribute.data_type == 0:
+                    data_type_class = Integer
+                elif attribute.data_type == 1:
+                    data_type_class = String(attribute.length)
+                elif attribute.data_type == 2:
+                    data_type_class = Date
+                elif attribute.data_type == 3:
+                    data_type_class = Boolean
 
-class Attribute(Base):
-    __tablename__ = 'attribute'
-    # meta info
-    name = Column(String(80), primary_key=True)
-    entity_name = Column(String(80), ForeignKey(Entity.name), primary_key=True)
-    data_type = Column(Integer)  # 0 : Integer, 1 : String,
-    length = Column(Integer)
-    length_scale = Column(Integer)
-    mandatory = Column(Boolean)
+                if attribute.name in pk_attributes:
+                    column = Column(data_type_class, primary_key=True)
+                else:
+                    column = Column(data_type_class)
 
-    # business info
-    order = Column(Integer)
-    label = Column(String(250))
-    caption = Column(String(250))
-    placeholder = Column(String(250))
-    tooltip = Column(String(250))
-    comment = Column(String(4000))
-    initial_value = Column(String(250))
-    default_value = Column(String(250))
+                attr_dict[attribute.name] = column
 
-    __table_args__ = {'schema': 'core'}
-
-    entity = relationship("Entity", back_populates="attributes")
-
-
-class Key(Base):
-    __tablename__ = 'key'
-    name = Column(String(80), primary_key=True)
-    entity_name = Column(String(80), ForeignKey(Entity.name), primary_key=True)
-    label = Column(String(250))
-    comment = Column(String(4000))
-    key_type = Column(Integer)
-    target_key = Column(String(80))
-    target_entity = Column(String(80))
-
-    __table_args__ = (ForeignKeyConstraint([target_key, target_entity], [
-                      name, entity_name]), {'schema': 'core'})
-
-    entity = relationship("Entity", back_populates="keys")
-
-
-class KeyAttribute(Base):
-    __tablename__ = 'key_attribute'
-
-    key_name = Column(String(80), primary_key=True)
-    attribute_name = Column(String(80), primary_key=True)
-    entity_name = Column(String(80), primary_key=True)
-    __table_args__ = (ForeignKeyConstraint([attribute_name, entity_name], [
-                      Attribute.name, Attribute.entity_name]), 
-                      ForeignKeyConstraint([key_name, entity_name], [
-                      Key.name, Key.entity_name]), {'schema': 'core'})
-    order = Column(Integer)
-
-    key = relationship("Key", back_populates="key_attributes")
-
-
-class Module(Base):
-    __tablename__ = 'module'
-    name = Column(String(80), primary_key=True)
-    label = Column(String(250))
-    comment = Column(String(4000))
-    __table_args__ = {'schema': 'core'}
-
-
-module_entity_join = Table('module_entity_join', Base.metadata,
-                           Column('module_name', String(80), ForeignKey(
-                               Module.name), primary_key=True),
-                           Column('entity_name', String(80), ForeignKey(
-                               Entity.name), primary_key=True),
-                           schema='core')
-
-Entity.attributes = relationship(
-    Attribute, order_by=Attribute.order, back_populates="entity")
-
-Entity.keys = relationship(
-    Key, order_by=Key.key_type, back_populates="entity")
-
-Key.key_attributes = relationship(
-    KeyAttribute, order_by=KeyAttribute.order, back_populates="key")
-
-Module.entities = relationship(Entity, secondary=module_entity_join)
+            Base = declarative_base()
+            className = entity.name[0].upper() + entity.name[1:]
+            MyClass = type(className, (Base,), attr_dict)
+            print(MyClass)
+"""
 
 
 def get_core_metadata():
+    """ Initial core metamodel definition 
+    Unlike other entities, core model for Entities, Attributes, etc. is hardcoded, this fills tables with 
+    self definition to allow prototyping """
     core_entities = []
     core_entities.append(Entity(name='entity', schema_name='core',
                                 table_name='entity', label='Entity', comment='Entity model'))
@@ -191,7 +135,6 @@ def get_core_metadata():
 
     target_key = Column(String(80))
     target_entity = Column(String(80))
-
 
     core_keys.append(Key(name='key_pk', entity_name='key',
                          label='Key PK', comment='Key primary key', key_type=0))
