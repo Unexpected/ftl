@@ -1,18 +1,30 @@
 import React from 'react';
-import Home from '../components/Home';
-import List from '../components/List';
-import Action from '../components/Action';
-import { Route, Switch } from 'react-router-dom';
+import View from '../components/View';
+import { connect } from 'react-redux';
 
+const mapDispatchToProps = dispatch => ({
+    /* initialize: payload =>
+        dispatch({ type: APP_INITIALIZE, payload }),
+    selectModule: (moduleName, metadata) =>
+        dispatch({ type: MODULE_INITIALIZE, moduleName: moduleName, metadata: metadata }) */
+});
 
-function Content(props) {
-    return (
-        <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/entity/:entityName" component={List} />
-            <Route path="/entity/:entityName/:id" component={Action} />
-        </Switch>
-    );
+const mapStateToProps = state => {
+    return {
+        currentView: state.common.currentView
+    }
+};
+
+class Content extends React.Component {
+
+    render() {
+        return (
+            <View />
+        )
+    }
 }
 
-export default Content;
+/* <Route path="/entity/:entityName" component={List} />
+<Route path="/entity/:entityName/:id" component={Action} /> */
+
+export default connect(mapStateToProps, mapDispatchToProps)(Content);

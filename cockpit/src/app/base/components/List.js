@@ -1,20 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { LIST_LOAD } from '../../../constants/actionTypes';
 import agent from '../../../agent.js';
 import BootstrapTable from 'react-bootstrap-table-next';
 
 const mapStateToProps = state => {
     return {
-        listLoaded: state.common.viewLoaded,
-        entities: state.common.module.entities,
-        listData: state.common.viewData,
+        entities: state.common.module.entities
     }
 };
 
 const mapDispatchToProps = dispatch => ({
-    onLoad: (payload) =>
-        dispatch({ type: LIST_LOAD, payload }),
+
 });
 
 class List extends React.Component {
@@ -23,17 +19,17 @@ class List extends React.Component {
         super(props);
         this.state = {
             loadedEntity: null,
-            columns: []
+            columns: [],
+            listData: null
         };
     }
 
     updateComponent() {
-        const currentEntityName = this.props.match.params.entityName;
-        if (this.state.loadedEntity === null || this.state.loadedEntity["name"] !== currentEntityName) {
+        if (this.state.loadedEntity === null || this.state.loadedEntity["name"] !== this.props.entity) {
             // display a new list
 
             // update columns in state and start fetching data
-            const loadedEntity = this.props.entities[currentEntityName];
+            const loadedEntity = this.props.entities[this.props.entity];
             const columns = []
             Object.entries(loadedEntity.attributes).forEach(([name, attribute]) => {
                 columns.push({
@@ -41,20 +37,16 @@ class List extends React.Component {
                     text: attribute.label
                 });
             });
-            agent.Entities.all(loadedEntity.name).then(this.setState({ "loadedEntity": loadedEntity, "columns": columns })).then(payload => this.props.onLoad(payload));
+
+            agent.Query.fetch(this.props.query)
+                .then(
+                    payload => this.setState(
+                        { "loadedEntity": loadedEntity, "columns": columns, listData: payload }));
         }
     }
 
     componentDidMount() {
         this.updateComponent();
-        //this.props.onLoad("entities");
-
-        /*
-         this.props.onLoad(Promise.all([
-        agent.Articles.get(this.props.match.params.id),
-        agent.Comments.forArticle(this.props.match.params.id)
-        ]));
-        */
     }
 
     componentDidUpdate() {
@@ -66,22 +58,23 @@ class List extends React.Component {
     }
 
     render() {
-        if (this.state.columns.length === 0) {
+        if (this.state.columns.length === 0 || this.state.loadedEntity == null) {
             return (<div>Loading list, please wait...</div>);
         }
         const rowEvents = {
-            onClick: (e, row, rowIndex) => {
+            /* onClick: (e, row, rowIndex) => {
                 this.props.history.push(`/entity/${row.entity_name}/${row.name}`)
-            }
+            } */
         };
         /*const rows = [];
         this.props.listData.forEach((row) => {
             rows.push(<div><div>{row.label}</div><div>{row.entity_name}</div><div>{row.name}</div></div>);
         });*/
+
         return (
             <div>
-                Ceci est la liste des objets de type : {this.props.match.params.entityName}
-                <BootstrapTable keyField='name' data={this.props.listData} columns={this.state.columns} rowEvents={rowEvents} />
+                Ceci est la liste des objets de type : {this.props.entityName}
+                <BootstrapTable keyField='_key_field_value' data={this.state.listData} columns={this.state.columns} rowEvents={rowEvents} />
             </div>
         );
     }

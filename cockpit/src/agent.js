@@ -21,16 +21,20 @@ const requests = {
 };
 
 const App = {
-  modules: () => coreRequests.get('/core/module')
+  modules: () => requests.get('core/module')
 };
 
 const Module = {
-  metadata: moduleName => { const out = requests.get(`/core/module/${moduleName}`); console.log(out); return out; }
+  metadata: moduleName => requests.get(`core/module/${moduleName}`)
 };
 
 const Entities = {
-  all: () => requests.get('/entities')
+  all: entityName => requests.get(`core/${entityName}`)
 };
+
+const Query = {
+  fetch: query => requests.get(`core/query/${query}`)
+}
 
 // const limit = (count, p) => `limit=${count}&offset=${p ? p * count : 0}`;
 
@@ -87,5 +91,6 @@ export default {
   Module,
   Entities,
   Attributes,
-  Person
+  Person,
+  Query
 };

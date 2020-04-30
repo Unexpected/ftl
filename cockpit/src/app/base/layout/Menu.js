@@ -1,0 +1,60 @@
+import React from 'react';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import { VIEW_INITIALIZE } from '../../../constants/actionTypes.js';
+import { connect } from 'react-redux';
+
+
+const mapDispatchToProps = dispatch => ({
+    selectView: viewName =>
+        dispatch({ type: VIEW_INITIALIZE, viewName })
+});
+
+class Menu extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {};
+        this.handleMenuSelect = this.handleMenuSelect.bind(this);
+    }
+
+    componentDidMount() {
+    }
+
+    componentDidUpdate() {
+
+    }
+
+    handleMenuSelect(event) {
+        const viewName = event.target.attributes.entityName.value;
+        this.props.selectView(viewName);
+    }
+
+    render() {
+
+        const navItems = [];
+        Object.entries(this.props.entities).forEach(([name, entity]) => {
+            // const entity = e[0];
+            navItems.push(<Nav.Link key={name} entityname={name} onClick={this.handleMenuSelect}> {entity.label}</Nav.Link>)
+        });
+
+        return (
+            <Navbar bg="dark" variant="dark" sticky="top" expand="lg" >
+                <Navbar.Brand>{this.props.module.label}</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="mr-auto">
+                        {navItems}
+                    </Nav>
+                    {/* TODO : Quicksearch ? 
+                    <Form inline>
+                        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
+                        <Button variant="outline-success">TODO</Button>
+                    </Form>*/}
+                </Navbar.Collapse>
+            </Navbar>
+        );
+    }
+}
+
+export default connect(null, mapDispatchToProps)(Menu);

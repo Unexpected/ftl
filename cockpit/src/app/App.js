@@ -22,6 +22,7 @@ const mapStateToProps = state => {
     appInitialized: state.common.appInitialized,
     modules: state.common.modules,
     currentModule: state.common.currentModule,
+    currentView: state.common.currentView,
   }
 };
 

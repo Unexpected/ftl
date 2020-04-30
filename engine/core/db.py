@@ -53,10 +53,19 @@ def close_db_connection(e=None):
 def get_all(entity_name):
     db_session = get_db_session()
 
-    className = entity_name[0].upper() + entity_name[1:]
+    className = "".join([(p[0].upper() + p[1:])
+                         for p in entity_name.split("_")])
     clazz = getattr(sys.modules["core.model"], className)
     q = db_session.query(clazz)
     return q.all()
+
+
+def get_one(entity_name, pk):
+    db_session = get_db_session()
+    className = entity_name[0].upper() + entity_name[1:]
+    clazz = getattr(sys.modules["core.model"], className)
+    q = db_session.query(clazz)
+    return q.get(pk)
 
 
 def get_data(entity_name):

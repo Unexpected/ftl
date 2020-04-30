@@ -2,7 +2,8 @@
 import {
   APP_INITIALIZE,
   MODULE_INITIALIZE,
-  MODULE_UNLOAD
+  MODULE_UNLOAD,
+  VIEW_INITIALIZE
 } from '../constants/actionTypes';
 /*import {
   APP_LOAD,
@@ -43,13 +44,20 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         currentModule: action.moduleName,
-        module: action.metadata[0]
+        module: action.metadata[0],
+        currentView: "default"
       };
     case MODULE_UNLOAD:
       return {
         ...state,
         currentModule: null,
         module: null
+      };
+    case VIEW_INITIALIZE:
+      return {
+        ...state,
+        currentView: action.viewName,
+        viewInitialized: true
       };
 
     case 'LOCATION_CHANGE':
