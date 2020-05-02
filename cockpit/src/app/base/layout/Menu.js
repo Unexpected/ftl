@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 
 
 const mapDispatchToProps = dispatch => ({
-    selectView: viewName =>
-        dispatch({ type: VIEW_INITIALIZE, viewName })
+    selectView: entityName =>
+        dispatch({ type: VIEW_INITIALIZE, viewName: "list", entityName: entityName, queryName: entityName, keys: [] })
 });
 
 class Menu extends React.Component {
@@ -26,8 +26,8 @@ class Menu extends React.Component {
     }
 
     handleMenuSelect(event) {
-        const viewName = event.target.attributes.entityName.value;
-        this.props.selectView(viewName);
+        const entityName = event.target.attributes.entityName.value;
+        this.props.selectView(entityName);
     }
 
     render() {

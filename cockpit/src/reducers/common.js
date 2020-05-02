@@ -5,34 +5,19 @@ import {
   MODULE_UNLOAD,
   VIEW_INITIALIZE
 } from '../constants/actionTypes';
-/*import {
-  APP_LOAD,
-  REDIRECT,
-  LOGOUT,
-  ARTICLE_SUBMITTED,
-  SETTINGS_SAVED,
-  LOGIN,
-  REGISTER,
-  DELETE_ARTICLE,
-  ARTICLE_PAGE_UNLOADED,
-  EDITOR_PAGE_UNLOADED,
-  HOME_PAGE_UNLOADED,
-  PROFILE_PAGE_UNLOADED,
-  PROFILE_FAVORITES_PAGE_UNLOADED,
-  SETTINGS_PAGE_UNLOADED,
-  LOGIN_PAGE_UNLOADED,
-  REGISTER_PAGE_UNLOADED
-} from '../constants/actionTypes';
-*/
+
 const defaultState = {
   appInitialized: false,
 
   appLoaded: false,
   viewLoaded: false,
-  viewChangeCounter: 0
+  viewChangeCounter: 0,
+
+  view: {}
 };
 
 export default (state = defaultState, action) => {
+  var view = { ...state.view }
   switch (action.type) {
     case APP_INITIALIZE:
       return {
@@ -41,11 +26,12 @@ export default (state = defaultState, action) => {
         appInitialized: true
       };
     case MODULE_INITIALIZE:
+      view.name = "default";
       return {
         ...state,
         currentModule: action.moduleName,
         module: action.metadata[0],
-        currentView: "default"
+        view: view
       };
     case MODULE_UNLOAD:
       return {
@@ -54,12 +40,15 @@ export default (state = defaultState, action) => {
         module: null
       };
     case VIEW_INITIALIZE:
+      view.name = action.viewName;
+      view.entityName = action.entityName;
+      view.queryName = action.queryName;
+      view.keys = action.keys;
       return {
         ...state,
-        currentView: action.viewName,
+        view: view,
         viewInitialized: true
       };
-
     case 'LOCATION_CHANGE':
       return {
         ...state,

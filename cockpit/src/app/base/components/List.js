@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import agent from '../../../agent.js';
 import BootstrapTable from 'react-bootstrap-table-next';
+import { VIEW_INITIALIZE } from '../../../constants/actionTypes.js';
 
 const mapStateToProps = state => {
     return {
@@ -10,7 +11,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-
+    openAction: (entityName, keys) =>
+        dispatch({ type: VIEW_INITIALIZE, viewName: "action", entityName: entityName, queryName: null, keys: keys })
 });
 
 class List extends React.Component {
@@ -25,11 +27,11 @@ class List extends React.Component {
     }
 
     updateComponent() {
-        if (this.state.loadedEntity === null || this.state.loadedEntity["name"] !== this.props.entity) {
+        if (this.state.loadedEntity === null || this.state.loadedEntity["name"] !== this.props.entityName) {
             // display a new list
 
             // update columns in state and start fetching data
-            const loadedEntity = this.props.entities[this.props.entity];
+            const loadedEntity = this.props.entities[this.props.entityName];
             const columns = []
             Object.entries(loadedEntity.attributes).forEach(([name, attribute]) => {
                 columns.push({
@@ -38,7 +40,7 @@ class List extends React.Component {
                 });
             });
 
-            agent.Query.fetch(this.props.query)
+            agent.Query.fetch(this.props.queryName)
                 .then(
                     payload => this.setState(
                         { "loadedEntity": loadedEntity, "columns": columns, listData: payload }));
@@ -62,9 +64,9 @@ class List extends React.Component {
             return (<div>Loading list, please wait...</div>);
         }
         const rowEvents = {
-            /* onClick: (e, row, rowIndex) => {
-                this.props.history.push(`/entity/${row.entity_name}/${row.name}`)
-            } */
+            onClick: (e, row, rowIndex) => {
+                this.props.openAction(this.props.entityName, row._key_field_value);
+            }
         };
         /*const rows = [];
         this.props.listData.forEach((row) => {

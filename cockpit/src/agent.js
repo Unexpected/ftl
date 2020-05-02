@@ -28,6 +28,10 @@ const Module = {
   metadata: moduleName => requests.get(`core/module/${moduleName}`)
 };
 
+const Entity = {
+  fetchOne: (entityName, keyValue) => requests.get(`core/${entityName}/${keyValue}`)
+};
+
 const Entities = {
   all: entityName => requests.get(`core/${entityName}`)
 };
@@ -90,6 +94,7 @@ export default {
   App,
   Module,
   Entities,
+  Entity,
   Attributes,
   Person,
   Query

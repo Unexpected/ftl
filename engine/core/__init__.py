@@ -60,8 +60,8 @@ def query(query_name):
     pk = [k for k in main_entity.keys if k.key_type == 0][0]
 
     for e in all:
-        _key_field_value = "-".join([e.__dict__[ka.attribute_name]
-                                     for ka in pk.key_attributes])
+        _key_field_value = "|||".join([e.__dict__[ka.attribute_name]
+                                       for ka in pk.key_attributes])
         e.__dict__["_key_field_value"] = _key_field_value
 
     return sqlalchemy_to_json(all)
@@ -104,11 +104,20 @@ def module(module_name):
 
 @app.route('/<entity_name>/<primary_key>')
 def one(entity_name, primary_key):
-    """ List of all <entity_name> """
+    """ Fetch one entity from primary_key """
+    #metamodel_entity = get_one("entity", entity_name)
+    #primary_key_model = [k for k in metamodel_entity.keys if k.key_type == 0][0]
+    # for e in all:
+    one = None
     if entity_name == "module":
         return module(primary_key)
+    if "|||" in primary_key:
+        one = get_one(entity_name, tuple(primary_key.split("|||")))
+    else:
+        one = get_one(entity_name, primary_key)
+    return sqlalchemy_to_json([ one ])
     #e = get_one(entity_name, primary_key)
-    return "NOT FOUND"  # sqlalchemy_to_json(all)
+    # return "NOT FOUND"  # sqlalchemy_to_json(all)
 
 
 @app.route('/db/reset-db')

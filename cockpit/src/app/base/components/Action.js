@@ -7,9 +7,7 @@ import { ACTION_SAVE } from '../../../constants/actionTypes';
 
 const mapStateToProps = state => {
     return {
-        listLoaded: state.common.viewLoaded,
-        entities: state.common.entities,
-        listData: state.common.viewData,
+        entities: state.common.module.entities
     }
 };
 
@@ -44,7 +42,11 @@ class MyFormGroup extends React.Component {
 class Action extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { form: {} };
+        this.state = {
+            form: {},
+            entityModel: null,
+            formModel: null
+        };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -58,17 +60,46 @@ class Action extends React.Component {
 
     handleSubmit(event) {
         console.log('Le formulaire a été soumis : ' + this.state.form.nom);
-        agent.Person.create(this.state.form);
+        //agent.Person.create(this.state.form);
         event.preventDefault();
+    }
+
+    updateComponent() {
+        if (this.state.entityModel === null || this.state.entityModel["name"] !== this.props.entityName) {
+            // update metadata
+            const entityModel = this.props.entities[this.props.entityName];
+
+            const formModel = [];
+            Object.entries(entityModel.attributes).forEach(([name, attribute]) => {
+                formModel.push(
+                    <MyFormGroup id={name} label={attribute.label} onChange={this.handleChange} /* value={this.state.form[row.id]} */ placeholder={attribute.placeholder} />
+                )
+            });
+
+            this.setState({ "entityModel": entityModel, "formModel": formModel });
+        }
+        if (this.props.keys !== null && this.props.keys.length === 1) {
+            // fetch one entity
+
+        }
+    }
+
+    componentDidMount() {
+        this.updateComponent();
+    }
+
+    componentDidUpdate() {
+        this.updateComponent();
     }
 
     render() {
 
-        const metadata = [];
+        /* const metadata = [];
         this.props.listData.forEach((row) =>
             metadata.push(
                 <MyFormGroup id={row.name} label={row.label} onChange={this.handleChange} value={this.state.form[row.id]} placeholder={row.placeholder} />
             ));
+            */
         // const subForm = <MyFormGroup id="nom" label="Nom" onChange={this.handleChange} value={this.state.form.nom} placeholder="Entrez votre nom ici..." />
 
         return (
@@ -76,7 +107,7 @@ class Action extends React.Component {
                 This is an action !
                 <Form onSubmit={this.handleSubmit}>
                     <Button type="submit">Valider</Button>
-                    {metadata}
+                    {this.state.formModel}
                 </Form>
             </div>
         );
