@@ -65,14 +65,9 @@ class List extends React.Component {
         }
         const rowEvents = {
             onClick: (e, row, rowIndex) => {
-                this.props.openAction(this.props.entityName, row._key_field_value);
+                this.props.openAction(this.props.entityName, [row._key_field_value]);
             }
         };
-        /*const rows = [];
-        this.props.listData.forEach((row) => {
-            rows.push(<div><div>{row.label}</div><div>{row.entity_name}</div><div>{row.name}</div></div>);
-        });*/
-
         return (
             <div>
                 Ceci est la liste des objets de type : {this.props.entityName}

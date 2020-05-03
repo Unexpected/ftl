@@ -69,18 +69,34 @@ class Action extends React.Component {
             // update metadata
             const entityModel = this.props.entities[this.props.entityName];
 
-            const formModel = [];
-            Object.entries(entityModel.attributes).forEach(([name, attribute]) => {
-                formModel.push(
-                    <MyFormGroup id={name} label={attribute.label} onChange={this.handleChange} /* value={this.state.form[row.id]} */ placeholder={attribute.placeholder} />
-                )
-            });
+            if (this.props.keys !== null && this.props.keys.length === 1) {
+                // fetch one entity
+                agent.Entity.fetchOne(this.props.entityName, this.props.keys[0])
+                    .then(entity => {
+                        const formModel = [];
+                        var formState = { ...this.state.form }
+                        Object.entries(entityModel.attributes).forEach(([name, attribute]) => {
+                            if (entity[name] === null) {
+                                formState[name] = "";
+                            } else {
+                                formState[name] = entity[name];
+                            }
+                            formModel.push(
+                                <MyFormGroup id={name} key={name} label={attribute.label} onChange={this.handleChange} value={formState[name]} placeholder={attribute.placeholder} />
+                            )
+                        });
 
-            this.setState({ "entityModel": entityModel, "formModel": formModel });
-        }
-        if (this.props.keys !== null && this.props.keys.length === 1) {
-            // fetch one entity
-
+                        this.setState({ "entityModel": entityModel, "formModel": formModel, "form": formState });
+                    });
+            } else {
+                const formModel = [];
+                Object.entries(entityModel.attributes).forEach(([name, attribute]) => {
+                    formModel.push(
+                        <MyFormGroup id={name} key={name} label={attribute.label} onChange={this.handleChange} value={this.state.form[name]} placeholder={attribute.placeholder} />
+                    )
+                });
+                this.setState({ "entityModel": entityModel, "formModel": formModel });
+            }
         }
     }
 

@@ -115,7 +115,14 @@ def one(entity_name, primary_key):
         one = get_one(entity_name, tuple(primary_key.split("|||")))
     else:
         one = get_one(entity_name, primary_key)
-    return sqlalchemy_to_json([ one ])
+    entity_dict = dict(one.__dict__)
+    del entity_dict["_sa_instance_state"]
+    for attr, value in entity_dict.items():
+        print((attr, value))
+    r = make_response(json.dumps(entity_dict, indent=2))
+    r.mimetype = 'application/json'
+    return r
+    # return sqlalchemy_to_json([one])
     #e = get_one(entity_name, primary_key)
     # return "NOT FOUND"  # sqlalchemy_to_json(all)
 
