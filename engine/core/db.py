@@ -62,7 +62,8 @@ def get_all(entity_name):
 
 def get_one(entity_name, pk):
     db_session = get_db_session()
-    className = entity_name[0].upper() + entity_name[1:]
+    className = "".join([(p[0].upper() + p[1:])
+                         for p in entity_name.split("_")])
     clazz = getattr(sys.modules["core.model"], className)
     q = db_session.query(clazz)
     return q.get(pk)

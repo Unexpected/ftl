@@ -114,7 +114,7 @@ def get_core_metadata():
     core_key_attributes.append(KeyAttribute(
         key_name='attribute_pk', attribute_name='name', entity_name='attribute', order=0))
     core_key_attributes.append(KeyAttribute(
-        key_name='attribute_pk', attribute_name='entity_name', entity_name='attribute', order=0))
+        key_name='attribute_pk', attribute_name='entity_name', entity_name='attribute', order=5))
 
     # Key
     core_entities.append(Entity(name='key', schema_name='core',
