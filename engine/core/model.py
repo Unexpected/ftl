@@ -16,8 +16,15 @@ class Entity(Base):
     label = Column(String(250))
     comment = Column(String(4000))
     # engine technical data
-    status = Column(Integer)
+    # status = Column(Integer)
     #__table_args__ = {'schema': 'core'}
+
+    def update_from_dict(self, data):
+        self.database_name = data["database_name"]
+        self.schema_name = data["schema_name"]
+        self.table_name = data["table_name"]
+        self.label = data["label"]
+        self.comment = data["comment"]
 
 
 class Attribute(Base):
@@ -44,6 +51,22 @@ class Attribute(Base):
 
     entity = relationship("Entity", back_populates="attributes")
 
+    def update_from_dict(self, data):
+        self.data_type = int(data["data_type"])
+        self.length = int(data["length"])
+        self.length_scale = int(data["length_scale"])
+        self.mandatory = data["mandatory"]
+
+        # business info
+        self.order = int(data["order"])
+        self.label = data["label"]
+        self.caption = data["caption"]
+        self.placeholder = data["placeholder"]
+        self.tooltip = data["tooltip"]
+        self.comment = data["comment"]
+        self.initial_value = data["initial_value"]
+        self.default_value = data["default_value"]
+
 
 class Key(Base):
     __tablename__ = 'key'
@@ -60,6 +83,13 @@ class Key(Base):
 
     entity = relationship("Entity", back_populates="keys")
 
+    def update_from_dict(self, data):
+        self.label = data["label"]
+        self.comment = data["comment"]
+        self.key_type = int(data["key_type"])
+        self.target_key = data["target_key"]
+        self.target_entity = data["target_entity"]
+
 
 class KeyAttribute(Base):
     __tablename__ = 'key_attribute'
@@ -75,6 +105,9 @@ class KeyAttribute(Base):
 
     key = relationship("Key", back_populates="key_attributes")
 
+    def update_from_dict(self, data):
+        self.order = int(data["order"])
+
 
 class Module(Base):
     __tablename__ = 'module'
@@ -82,6 +115,10 @@ class Module(Base):
     label = Column(String(250))
     comment = Column(String(4000))
     #__table_args__ = {'schema': 'core'}
+
+    def update_from_dict(self, data):
+        self.label = data["label"]
+        self.comment = data["comment"]
 
 
 module_entity_join = Table('module_entity_join', Base.metadata,

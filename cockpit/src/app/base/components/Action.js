@@ -24,11 +24,6 @@ class MyFormGroup extends React.Component {
 
     render() {
         return (
-            /* <Form.Group controlId="formGroupEmail">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control type="email" placeholder="Enter email" />
-                    <Form.Control onChange={this.props.onChange} ref={this.textInput} placeholder={this.props.placeholder} />
-                </Form.Group> */
             <div>
                 <Form.Group controlId={this.props.id}>
                     <Form.Label>{this.props.label}</Form.Label>
@@ -59,7 +54,8 @@ class Action extends React.Component {
 
 
     handleSubmit(event) {
-        console.log('Le formulaire a été soumis : ' + this.state.form.nom);
+        agent.Entity.update(this.props.entityName, this.state.form);
+        console.log('Le formulaire a été soumis : ' + this.state.form);
         //agent.Person.create(this.state.form);
         event.preventDefault();
     }
@@ -73,7 +69,6 @@ class Action extends React.Component {
                 // fetch one entity
                 agent.Entity.fetchOne(this.props.entityName, this.props.keys[0])
                     .then(entity => {
-                        const formModel = [];
                         var formState = { ...this.state.form }
                         Object.entries(entityModel.attributes).forEach(([name, attribute]) => {
                             if (entity[name] === null) {
@@ -81,21 +76,12 @@ class Action extends React.Component {
                             } else {
                                 formState[name] = entity[name];
                             }
-                            formModel.push(
-                                <MyFormGroup id={name} key={name} label={attribute.label} onChange={this.handleChange} value={formState[name]} placeholder={attribute.placeholder} />
-                            )
                         });
 
-                        this.setState({ "entityModel": entityModel, "formModel": formModel, "form": formState });
+                        this.setState({ "entityModel": entityModel, "form": formState });
                     });
             } else {
-                const formModel = [];
-                Object.entries(entityModel.attributes).forEach(([name, attribute]) => {
-                    formModel.push(
-                        <MyFormGroup id={name} key={name} label={attribute.label} onChange={this.handleChange} value={this.state.form[name]} placeholder={attribute.placeholder} />
-                    )
-                });
-                this.setState({ "entityModel": entityModel, "formModel": formModel });
+                this.setState({ "entityModel": entityModel });
             }
         }
     }
@@ -109,7 +95,15 @@ class Action extends React.Component {
     }
 
     render() {
-
+        if (this.state.entityModel === null) {
+            return <div>Loading...</div>
+        }
+        const formModel = [];
+        Object.entries(this.state.entityModel.attributes).forEach(([name, attribute]) => {
+            formModel.push(
+                <MyFormGroup id={name} key={name} label={attribute.label} onChange={this.handleChange} value={this.state.form[name]} placeholder={attribute.placeholder} />
+            )
+        });
         /* const metadata = [];
         this.props.listData.forEach((row) =>
             metadata.push(
@@ -123,7 +117,7 @@ class Action extends React.Component {
                 This is an action !
                 <Form onSubmit={this.handleSubmit}>
                     <Button type="submit">Valider</Button>
-                    {this.state.formModel}
+                    {formModel}
                 </Form>
             </div>
         );

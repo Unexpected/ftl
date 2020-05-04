@@ -69,6 +69,33 @@ def get_one(entity_name, pk):
     return q.get(pk)
 
 
+def update_one(entity_name, data_dict):
+    db_session = get_db_session()
+    className = "".join([(p[0].upper() + p[1:])
+                         for p in entity_name.split("_")])
+    clazz = getattr(sys.modules["core.model"], className)
+
+    entity_model = get_one("entity", entity_name)
+    pk_model = [k for k in entity_model.keys if k.key_type == 0][0]
+    key_attributes = [ka.attribute_name for ka in pk_model.key_attributes]
+    key_fields = []
+    other_fields = []
+    for attribute, value in data_dict.items():
+        if attribute in key_attributes:
+            key_fields.append(value)
+        else:
+            other_fields.append((attribute, value))
+
+    existing = get_one(entity_name, tuple(key_fields))
+    existing.update_from_dict(data_dict)
+    # db_session.add(existing)
+    # db_session.flush()
+    # print(existing.database_name)
+    db_session.commit()
+    # print(existing.database_name)
+    # print(db_session.query(clazz).get(tuple(key_fields)).database_name)
+
+
 def get_data(entity_name):
     db_session = get_db_session()
 

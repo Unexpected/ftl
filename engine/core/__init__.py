@@ -1,12 +1,12 @@
 import json
 
-from flask import Flask, g, make_response
+from flask import Flask, g, make_response, request
 from flask_cors import CORS
 from flask.json import jsonify
 
 from core.model import *
 
-from core.db import check_db_connection, close_db_connection, get_one, get_all, reset, get_module
+from core.db import check_db_connection, close_db_connection, get_one, get_all, reset, get_module, update_one
 
 app = Flask(__name__)
 CORS(app)
@@ -125,6 +125,15 @@ def one(entity_name, primary_key):
     # return sqlalchemy_to_json([one])
     #e = get_one(entity_name, primary_key)
     # return "NOT FOUND"  # sqlalchemy_to_json(all)
+
+
+@app.route('/<entity_name>', methods=['POST'])
+def update(entity_name):
+    print("update %s" % entity_name)
+    data_dict = json.loads(request.data)
+    update_one(entity_name, data_dict)
+
+    return "OK"
 
 
 @app.route('/db/reset-db')
