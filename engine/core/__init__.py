@@ -90,6 +90,18 @@ def module(module_name):
             if "_sa_instance_state" in attribute_dict:
                 del attribute_dict["_sa_instance_state"]
         entity_dict["attributes"] = attributes_dict
+
+        for k in e.keys:
+            entity_dict["primary_key"] = []
+            if k.key_type == 0:
+                for ka in k.key_attributes:
+                    entity_dict["primary_key"].append(ka.attribute_name)
+        del entity_dict["keys"]
+
+        if "_sa_instance_state" in attribute_dict:
+            del attribute_dict["_sa_instance_state"]
+        entity_dict["attributes"] = attributes_dict
+
         if "_sa_instance_state" in entity_dict:
             del entity_dict["_sa_instance_state"]
 

@@ -7,7 +7,7 @@ import { ACTION_SAVE } from '../../../constants/actionTypes';
 
 const mapStateToProps = state => {
     return {
-        entities: state.common.module.entities
+        models: state.common.module.entities
     }
 };
 
@@ -23,13 +23,20 @@ class MyFormGroup extends React.Component {
     }
 
     render() {
-        return (
-            <div>
+        if (this.props.readonly) {
+            return (
                 <Form.Group controlId={this.props.id}>
                     <Form.Label>{this.props.label}</Form.Label>
-                    <Form.Control onChange={this.props.onChange} value={this.props.value} placeholder={this.props.placeholder} />
+                    <Form.Control value={this.props.value} plaintext readonly />
                 </Form.Group>
-            </div>
+            )
+        }
+
+        return (
+            <Form.Group controlId={this.props.id}>
+                <Form.Label>{this.props.label}</Form.Label>
+                <Form.Control onChange={this.props.onChange} value={this.props.value} placeholder={this.props.placeholder} />
+            </Form.Group>
         );
     }
 }
@@ -63,7 +70,7 @@ class Action extends React.Component {
     updateComponent() {
         if (this.state.entityModel === null || this.state.entityModel["name"] !== this.props.entityName) {
             // update metadata
-            const entityModel = this.props.entities[this.props.entityName];
+            const entityModel = this.props.models[this.props.entityName];
 
             if (this.props.keys !== null && this.props.keys.length === 1) {
                 // fetch one entity
@@ -100,8 +107,9 @@ class Action extends React.Component {
         }
         const formModel = [];
         Object.entries(this.state.entityModel.attributes).forEach(([name, attribute]) => {
+            const readonly = this.state.entityModel.primary_key.includes(name);
             formModel.push(
-                <MyFormGroup id={name} key={name} label={attribute.label} onChange={this.handleChange} value={this.state.form[name]} placeholder={attribute.placeholder} />
+                <MyFormGroup id={name} key={name} label={attribute.label} onChange={this.handleChange} value={this.state.form[name]} placeholder={attribute.placeholder} readonly={readonly} />
             )
         });
         /* const metadata = [];
