@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 
 
 const mapDispatchToProps = dispatch => ({
-    selectView: entityName =>
-        dispatch({ type: VIEW_INITIALIZE, viewName: "list", entityName: entityName, queryName: entityName, keys: [] })
+    selectView: (viewName, entityName) =>
+        dispatch({ type: VIEW_INITIALIZE, viewName: viewName, entityName: entityName, queryName: entityName, keys: [] })
 });
 
 class Menu extends React.Component {
@@ -27,7 +27,8 @@ class Menu extends React.Component {
 
     handleMenuSelect(event) {
         const entityName = event.target.attributes.entityName.value;
-        this.props.selectView(entityName);
+        const viewName = event.target.attributes.viewName.value;
+        this.props.selectView(viewName, entityName);
     }
 
     render() {
@@ -35,12 +36,12 @@ class Menu extends React.Component {
         const navItems = [];
         Object.entries(this.props.entities).forEach(([name, entity]) => {
             // const entity = e[0];
-            navItems.push(<Nav.Link key={name} entityname={name} onClick={this.handleMenuSelect}> {entity.label}</Nav.Link>)
+            navItems.push(<Nav.Link key={name} entityname={name} viewName="list" onClick={this.handleMenuSelect}> {entity.label}</Nav.Link>)
         });
 
         return (
             <Navbar bg="dark" variant="dark" sticky="top" expand="lg" >
-                <Navbar.Brand>{this.props.module.label}</Navbar.Brand>
+                <Navbar.Brand viewName="default" entityname="" onClick={this.handleMenuSelect}>{this.props.module.label}</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
