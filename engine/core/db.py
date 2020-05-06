@@ -89,11 +89,20 @@ def update_one(entity_name, data_dict):
     existing = get_one(entity_name, tuple(key_fields))
     existing.update_from_dict(data_dict)
     # db_session.add(existing)
-    # db_session.flush()
-    # print(existing.database_name)
     db_session.commit()
-    # print(existing.database_name)
-    # print(db_session.query(clazz).get(tuple(key_fields)).database_name)
+
+
+def insert_one(entity_name, data_dict):
+    db_session = get_db_session()
+    className = "".join([(p[0].upper() + p[1:])
+                         for p in entity_name.split("_")])
+
+    clazz = getattr(sys.modules["core.model"], className)
+    new_entity = clazz()
+    new_entity.set_primary_key(data_dict)
+    new_entity.update_from_dict(data_dict)
+    db_session.add(new_entity)
+    db_session.commit()
 
 
 def get_data(entity_name):

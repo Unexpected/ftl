@@ -6,7 +6,7 @@ from flask.json import jsonify
 
 from core.model import *
 
-from core.db import check_db_connection, close_db_connection, get_one, get_all, reset, get_module, update_one
+from core.db import check_db_connection, close_db_connection, get_one, get_all, reset, get_module, update_one, insert_one
 
 app = Flask(__name__)
 CORS(app)
@@ -144,6 +144,15 @@ def update(entity_name):
     print("update %s" % entity_name)
     data_dict = json.loads(request.data)
     update_one(entity_name, data_dict)
+
+    return "OK"
+
+
+@app.route('/<entity_name>', methods=['PUT'])
+def insert(entity_name):
+    print("insert %s" % entity_name)
+    data_dict = json.loads(request.data)
+    insert_one(entity_name, data_dict)
 
     return "OK"
 

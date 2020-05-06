@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import agent from '../../../agent.js';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { VIEW_INITIALIZE } from '../../../constants/actionTypes.js';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import { Button } from 'react-bootstrap';
 
 const mapStateToProps = state => {
     return {
@@ -24,6 +27,14 @@ class List extends React.Component {
             columns: [],
             listData: null
         };
+        this.handleAction = this.handleAction.bind(this);
+    }
+
+    handleAction(event) {
+        const actionType = event.target.attributes.action.value;
+        if (actionType === "create") {
+            this.props.openAction(this.props.entityName, []);
+        }
     }
 
     updateComponent() {
@@ -69,10 +80,13 @@ class List extends React.Component {
             }
         };
         return (
-            <div>
-                Ceci est la liste des objets de type : {this.props.entityName}
-                <BootstrapTable keyField='_key_field_value' data={this.state.listData} columns={this.state.columns} rowEvents={rowEvents} />
-            </div>
+            <Container>
+                <Row className="justify-content-md-center">Ceci est la liste des objets de type : {this.props.entityName}</Row>
+                <Row><Button onClick={this.handleAction} action="create">Create new element</Button></Row>
+                <Row>
+                    <BootstrapTable keyField='_key_field_value' data={this.state.listData} columns={this.state.columns} rowEvents={rowEvents} />
+                </Row>
+            </Container>
         );
     }
 }

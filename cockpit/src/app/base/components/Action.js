@@ -44,10 +44,15 @@ class MyFormGroup extends React.Component {
 class Action extends React.Component {
     constructor(props) {
         super(props);
+        let actionType = "create";
+        if (this.props.keys !== null && this.props.keys.length === 1) {
+            actionType = "update";
+        }
         this.state = {
             form: {},
             entityModel: null,
-            formModel: null
+            formModel: null,
+            actionType: actionType
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -61,9 +66,12 @@ class Action extends React.Component {
 
 
     handleSubmit(event) {
-        agent.Entity.update(this.props.entityName, this.state.form);
+        if (this.state.actionType === "create") {
+            agent.Entity.insert(this.props.entityName, this.state.form);
+        } else {
+            agent.Entity.update(this.props.entityName, this.state.form);
+        }
         console.log('Le formulaire a été soumis : ' + this.state.form);
-        //agent.Person.create(this.state.form);
         event.preventDefault();
     }
 
@@ -72,7 +80,7 @@ class Action extends React.Component {
             // update metadata
             const entityModel = this.props.models[this.props.entityName];
 
-            if (this.props.keys !== null && this.props.keys.length === 1) {
+            if (this.state.actionType === "update") {
                 // fetch one entity
                 agent.Entity.fetchOne(this.props.entityName, this.props.keys[0])
                     .then(entity => {
@@ -88,7 +96,12 @@ class Action extends React.Component {
                         this.setState({ "entityModel": entityModel, "form": formState });
                     });
             } else {
-                this.setState({ "entityModel": entityModel });
+                var formState = { ...this.state.form }
+                Object.entries(entityModel.attributes).forEach(([name, attribute]) => {
+                    formState[name] = "";
+                });
+
+                this.setState({ "entityModel": entityModel, "form": formState });
             }
         }
     }
@@ -107,7 +120,7 @@ class Action extends React.Component {
         }
         const formModel = [];
         Object.entries(this.state.entityModel.attributes).forEach(([name, attribute]) => {
-            const readonly = this.state.entityModel.primary_key.includes(name);
+            const readonly = this.state.actionType !== "create" && this.state.entityModel.primary_key.includes(name);
             formModel.push(
                 <MyFormGroup id={name} key={name} label={attribute.label} onChange={this.handleChange} value={this.state.form[name]} placeholder={attribute.placeholder} readonly={readonly} />
             )

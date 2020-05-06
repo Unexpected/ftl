@@ -36,12 +36,12 @@ class Menu extends React.Component {
         const navItems = [];
         Object.entries(this.props.entities).forEach(([name, entity]) => {
             // const entity = e[0];
-            navItems.push(<Nav.Link key={name} entityname={name} viewName="list" onClick={this.handleMenuSelect}> {entity.label}</Nav.Link>)
+            navItems.push(<Nav.Link key={name} entityname={name} viewname="list" onClick={this.handleMenuSelect}> {entity.label}</Nav.Link>)
         });
 
         return (
             <Navbar bg="dark" variant="dark" sticky="top" expand="lg" >
-                <Navbar.Brand viewName="default" entityname="" onClick={this.handleMenuSelect}>{this.props.module.label}</Navbar.Brand>
+                <Navbar.Brand viewname="default" entityname="" onClick={this.handleMenuSelect}>{this.props.module.label}</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">

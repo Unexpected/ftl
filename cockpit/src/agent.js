@@ -31,6 +31,7 @@ const Module = {
 const Entity = {
   fetchOne: (entityName, keyValue) => requests.get(`core/${entityName}/${keyValue}`),
   update: (entityName, data) => requests.post(`core/${entityName}`, data),
+  insert: (entityName, data) => requests.put(`core/${entityName}`, data),
 };
 
 const Entities = {

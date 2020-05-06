@@ -26,6 +26,9 @@ class Entity(Base):
         self.label = data["label"]
         self.comment = data["comment"]
 
+    def set_primary_key(self, data):
+        self.name = data["name"]
+
 
 class Attribute(Base):
     __tablename__ = 'attribute'
@@ -67,6 +70,10 @@ class Attribute(Base):
         self.initial_value = data["initial_value"]
         self.default_value = data["default_value"]
 
+    def set_primary_key(self, data):
+        self.name = data["name"]
+        self.entity_name = data["entity_name"]
+
 
 class Key(Base):
     __tablename__ = 'key'
@@ -90,6 +97,10 @@ class Key(Base):
         self.target_key = data["target_key"]
         self.target_entity = data["target_entity"]
 
+    def set_primary_key(self, data):
+        self.name = data["name"]
+        self.entity_name = data["entity_name"]
+
 
 class KeyAttribute(Base):
     __tablename__ = 'key_attribute'
@@ -108,6 +119,11 @@ class KeyAttribute(Base):
     def update_from_dict(self, data):
         self.order = int(data["order"])
 
+    def set_primary_key(self, data):
+        self.key_name = data["key_name"]
+        self.attribute_name = data["attribute_name"]
+        self.entity_name = data["entity_name"]
+
 
 class Module(Base):
     __tablename__ = 'module'
@@ -119,6 +135,9 @@ class Module(Base):
     def update_from_dict(self, data):
         self.label = data["label"]
         self.comment = data["comment"]
+
+    def set_primary_key(self, data):
+        self.name = data["name"]
 
 
 module_entity_join = Table('module_entity_join', Base.metadata,
